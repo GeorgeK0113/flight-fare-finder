@@ -1,28 +1,24 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { PlaneTakeoff } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+
 import { supabase } from "@/integrations/supabase/client";
 
-export const Route = createFileRoute("/auth")({
-  head: () => ({
-    meta: [
-      { title: "Sign in — Flight Price Notifier" },
-      { name: "description", content: "Sign in or create an account to track flight prices from Taipei." },
-      { property: "og:title", content: "Sign in — Flight Price Notifier" },
-      { property: "og:description", content: "Sign in or create an account to track flight prices from Taipei." },
-    ],
-  }),
-  component: AuthPage,
-});
-
-function AuthPage() {
+export default function AuthPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+  const [searchParams] = useSearchParams();
+  const initialMode = searchParams.get("mode") === "signup" ? "signup" : "signin";
+  const [mode, setMode] = useState<"signin" | "signup">(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    document.title =
+      mode === "signin" ? "Sign in — Flight Price Notifier" : "Sign up — Flight Price Notifier";
+  }, [mode]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -37,11 +33,11 @@ function AuthPage() {
           options: { emailRedirectTo: window.location.origin },
         });
         if (error) throw error;
-        navigate({ to: "/app" });
+        navigate("/app");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/app" });
+        navigate("/app");
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");

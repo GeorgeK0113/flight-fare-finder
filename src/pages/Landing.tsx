@@ -1,27 +1,6 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plane, BellRing, CalendarX2, PlaneTakeoff } from "lucide-react";
 import { useEffect } from "react";
-
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Flight Price Notifier — 機票降價通知" },
-      {
-        name: "description",
-        content:
-          "設定航線與目標價，機票降價就通知你。Set a route and a target price — we email you when the fare drops.",
-      },
-      { property: "og:title", content: "Flight Price Notifier — 機票降價通知" },
-      {
-        property: "og:description",
-        content: "設定航線與目標價，機票降價就通知你。Set a route and a target price — we email you when the fare drops.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
-  component: LandingPage,
-});
+import { Link } from "react-router-dom";
 
 const FEATURES = [
   {
@@ -44,7 +23,11 @@ const FEATURES = [
   },
 ];
 
-function LandingPage() {
+export default function LandingPage() {
+  useEffect(() => {
+    document.title = "Flight Price Notifier — 機票降價通知";
+  }, []);
+
   useEffect(() => {
     const els = document.querySelectorAll(".reveal");
     const observer = new IntersectionObserver(
